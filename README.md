@@ -68,17 +68,16 @@ torrent_mover = false
 local_torrent_folder = /local_torrent_folder
 remote_torrent_folder = /remote_torrent_folder
 ```
-"install_def_app": installs default apps if true (htop, wget, curl, sudo, lnav), boolean.
-"install_folder": where scripts should be saved, path to folder.
+"install_def_app": installs default apps if true (htop, wget, curl, sudo, lnav), boolean;  
+"install_folder": where scripts should be saved, path to folder;  
 
-Autoupdate feature parses your ssh config(assuming you are using key authentication)
-"auto_update": generates script with hardcoded ssh hosts and adds task to crontab that runs everyday at 3:00AM, boolean.
+Autoupdate feature parses your ssh config(assuming you are using key authentication)  
+"auto_update": generates script with hardcoded ssh hosts and adds task to crontab that runs everyday at 3:00AM, boolean;  
 
-"yt_download": generates script that checks youtube playlist for updates, then downloads mp3 tracks from all videos in playlist and adds task to crontab that runs everyday at 3:00AM, boolean.
-"songs_folder": where musics from playlist should be saved, path to folder.
-"yt_playlist": playlist to download from, url link.
+"yt_download": generates script that checks youtube playlist for updates, then downloads mp3 tracks from all videos in playlist and adds task to crontab that runs everyday at 3:00AM, boolean;  
+"songs_folder": where musics from playlist should be saved, path to folder;  
+"yt_playlist": playlist to download from, url link;  
 
-
-"torrent_mover": generates script that moves .torrent files from local folder to remote one, boolean.
-"local_torrent_folder": folder from which scripts takes files, path to folder.
-"remote_torrent_folder": folder where scripts moves files, path to folder.
+"torrent_mover": generates script that moves .torrent files from local folder to remote one, boolean;  
+"local_torrent_folder": folder from which scripts takes files, path to folder;  
+"remote_torrent_folder": folder where scripts moves files, path to folder;  
