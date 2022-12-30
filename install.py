@@ -8,7 +8,7 @@ import sys
 # upgrade commands
 update_command = "sudo apt-get update"
 upgrade_command = "sudo apt-get update && sudo apt-get upgrade -y && sudo apt-get dist-upgrade -y && sudo apt-get autoremove -y"
-def_app_install_command = "sudo apt-get install glances wget curl sudo lnav -y"
+def_app_install_command = "sudo apt-get install htop wget curl sudo lnav -y"
 # list with approved hosts
 ahosts = []
 # possible user input
