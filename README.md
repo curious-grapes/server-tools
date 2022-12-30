@@ -7,13 +7,13 @@ This set of scripts is responsible for creating and scripts on a Linux server. I
 - The following Python packages: sshconf
 
 ##### TO-DO
-- [] write other arguments
-- [] notifications
-- [] remove function
-- [] verify function
-- [] clean function
-- [] add more output while script is running
-- [] fix bugs
+- [ ] write other arguments
+- [ ] notifications
+- [ ] remove function
+- [ ] verify function
+- [ ] clean function
+- [ ] add more output while script is running
+- [ ] fix bugs
 
 ##### Installation
 Install Python and dependency packages:
