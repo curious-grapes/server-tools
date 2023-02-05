@@ -2,10 +2,10 @@
 This set of scripts is responsible for creating and scripts on a Linux server. It is configurable via a configuration file, allowing you to easily set up and customize your tasks.
 
 ##### Useful links
-https://github.com/sorend/sshconf 
-https://medium.com/@benmorel/creating-a-linux-service-with-systemd-611b5c8b91d6 
-https://pynative.com/python-delete-files-and-directories/#h-delete-a-non-empty-directory-using-shutil 
-https://www.baeldung.com/linux/delete-lines-containing-string-from-file 
+- https://github.com/sorend/sshconf 
+- https://medium.com/@benmorel/creating-a-linux-service-with-systemd-611b5c8b91d6 
+- https://pynative.com/python-delete-files-and-directories/#h-delete-a-non-empty-directory-using-shutil 
+- https://www.baeldung.com/linux/delete-lines-containing-string-from-file 
 
 ##### Prerequisites
 - A Linux machine with Systemd installed
