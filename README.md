@@ -1,25 +1,17 @@
 ## server-tools
 This set of scripts is responsible for creating and scripts on a Linux server. It is configurable via a configuration file, allowing you to easily set up and customize your tasks.
 
-##### Useful links
-- https://github.com/sorend/sshconf 
-- https://medium.com/@benmorel/creating-a-linux-service-with-systemd-611b5c8b91d6 
-- https://pynative.com/python-delete-files-and-directories/#h-delete-a-non-empty-directory-using-shutil 
-- https://www.baeldung.com/linux/delete-lines-containing-string-from-file 
-
 ##### Prerequisites
 - A Linux machine with Systemd installed
 - Python 3
-- The following Python packages: sshconf
+- The following Python packages: [sshconf](https://github.com/sorend/sshconf)
 
 ##### TO-DO
 - [ ] write other arguments
 - [ ] notifications
-- [ ] remove function
-- [ ] verify function
-- [ ] clean function
+- [x] remove function
 - [ ] add more output while script is running
-- [ ] fix bugs
+- [x] fix bugs
 
 ##### Installation
 Install Python and dependency packages:
@@ -42,14 +34,6 @@ Run the create_tasks.py script with one of the following arguments to create the
 ```bash
 python3 install.py install
 ```
--   Verify
-```bash
-python3 install.py verify
-```
--   Clean
-```bash
-python3 install.py clean
-```
 -   Remove
 ```bash
 python3 install.py remove
@@ -68,11 +52,6 @@ auto_update = false
 yt_download = false
 songs_folder = /songs_folder
 yt_playlist =
-
-[TORRENT_MOVER]
-torrent_mover = false
-local_torrent_folder = /local_torrent_folder
-remote_torrent_folder = /remote_torrent_folder
 ```
 "install_def_app": installs default apps if true (htop, wget, curl, sudo, lnav), boolean;  
 "install_folder": where scripts should be saved, path to folder;  
@@ -82,8 +61,4 @@ Autoupdate feature parses your ssh config(assuming you are using key authenticat
 
 "yt_download": generates script that checks youtube playlist for updates, then downloads mp3 tracks from all videos in playlist and adds task to crontab that runs everyday at 3:00AM, boolean;  
 "songs_folder": where musics from playlist should be saved, path to folder;  
-"yt_playlist": playlist to download from, url link;  
-
-"torrent_mover": generates script that moves .torrent files from local folder to remote one, boolean;  
-"local_torrent_folder": folder from which scripts takes files, path to folder;  
-"remote_torrent_folder": folder where scripts moves files, path to folder;  
+"yt_playlist": playlist to download from, url link;

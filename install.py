@@ -152,50 +152,12 @@ def musicdownloader_f():
         ask = str(input('Do you want to download music now? (y/n) '))
         if ask in y_ans:
             runcom('bash ' + music_file, False)
-# torrent mover
-def torrentmover_f():
-    if config['TORRENT_MOVER'].getboolean('torrent_mover') == True:
-        create_dir()
-        local_torrent_folder = dir + 'torrent/'
-        if os.path.isdir(local_torrent_folder) == False: os.mkdir(local_torrent_folder)
-        if os.path.isdir(config['TORRENT_MOVER']['remote_torrent_folder']) == False: print('Folder to copy from not exist'); exit()
-        remote_torrent_folder = config['TORRENT_MOVER']['remote_torrent_folder']
-        code = f"""#!/usr/bin/bash
-    while true
-    do
-    if [ -z "$(ls -A {remote_torrent_folder})" ]; then
-    echo "Empty"
-    else
-    echo "Not Empty"
-    mv {remote_torrent_folder}* {local_torrent_folder}
-    fi
-    done"""
-        # creating python script in folder
-        torrent_file = dir + 'torrent.sh'
-        with open(torrent_file, 'w') as f:
-            f.write(code)
-        runcom(f"sudo chmod +x {torrent_file}", True)
-        service_code = f"""[Install]
-    WantedBy=multi-user.target
-
-    [Unit]
-    Description=Copies files from HDD to torrent folder
-    StartLimitIntervalSec=30
-    StartLimitBurst=2
-
-    [Service]
-    ExecStart=/usr/bin/bash {dir}/torrent.sh
-    Restart=always"""
-        service_file = 'torrentmover.service'
-        with open(service_file, 'w') as f:
-            f.write(service_code)
-        runcom(f'sudo chmod +x {service_file} && sudo cp {service_file} /etc/systemd/system/ && sudo systemctl start {service_file} && sudo systemctl enable {service_file} && rm -rf {service_file}', False)
 # remove folder made by script
 def remove_f():
     if os.path.isdir(dir) == True:
         import shutil
         shutil.rmtree(dir)
-        print('dir removed')
+        print('Removed directory')
 # remove crontab entries
 def remove_cron():
     import subprocess
@@ -221,7 +183,7 @@ def remove_cron():
         f.write(updated_crontab)
     # Update the crontab configuration with the contents of the temporary file
     subprocess.run(["crontab", "/tmp/crontab.tmp"])
-    print('cron job removed')
+    print('Removed cron jobs')
 # argument processing
 if len(sys.argv) == 2:
     option = str(sys.argv[1])
@@ -231,13 +193,12 @@ if len(sys.argv) == 2:
             defapps_f()
             autoupdate_f()
             musicdownloader_f()
-            torrentmover_f()
         elif option == 'debug':
             print('debugging...')
         elif option == 'remove':
             print('removing...')
-            remove_f()
             remove_cron()
+            remove_f()
     else:
         print('Command not found')
 else:
