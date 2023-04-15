@@ -5,6 +5,16 @@ import os
 import configparser
 import sys
 # VARIABLES
+logo = r"""
+                                                    __                 ___             
+                                                   /\ \__             /\_ \            
+  ____    __  _ __  __  __    __  _ __             \ \ ,_\   ___    __\//\ \     ____  
+ /',__\ /'__`/\`'__/\ \/\ \ /'__`/\`'__     ______  \ \ \/  / __`\ / __`\ \ \   /',__\ 
+/\__, `/\  __\ \ \/\ \ \_/ /\  __\ \ \/    /\______  \ \ \_/\ \L\ /\ \L\ \_\ \_/\__, `\
+\/\____\ \____\ \_\ \ \___/\ \____\ \_\    \/______/  \ \__\ \____\ \____/\____\/\____/
+ \/___/ \/____/\/_/  \/__/  \/____/\/_/                \/__/\/___/ \/___/\/____/\/___/ 
+"""
+print(logo)
 # upgrade commands
 update_command = "sudo apt-get update"
 upgrade_command = "sudo apt-get update && sudo apt-get upgrade -y && sudo apt-get dist-upgrade -y && sudo apt-get autoremove -y"
@@ -14,7 +24,7 @@ ahosts = []
 # possible user input
 y_ans = ['y', 'Y', 'yes', 'Yes', 'YES']
 n_ans = ['n', 'N', 'no', 'No', 'NO']
-args = ['install', 'verify', 'debug', 'remove']
+args = ['install', 'debug', 'remove']
 cur_user = os.getlogin()
 #check for config existence and parse
 config = configparser.ConfigParser()
@@ -25,12 +35,13 @@ else:
     print("No config found. You need to create one, look in documentation; exiting now.")
     exit()
 dir = config['PATH']['install_folder']
-print(dir)
+#print(dir)
 # FUNCTIONS
 # check for script folder, create if there is none
 def create_dir():
     if os.path.isdir(dir) == False:
         os.mkdir(dir)
+        runcom(f"sudo chmod 700 {dir}", True)
 # function to execute command
 def runcom(command, mute):
     exec = os.popen(command)
@@ -41,9 +52,9 @@ def runcom(command, mute):
 def defapps_f():
     if config['PATH'].getboolean('install_def_app') == True:
         # check for updates
-        runcom(update_command, True)
+        runcom(update_command, False)
         # installing apps
-        runcom(def_app_install_command, False)
+        runcom(def_app_install_command, True)
 # autoupdate server picking
 def autoupdate_f():
     if config['AUTOUPDATE'].getboolean('auto_update') == True:
@@ -65,43 +76,46 @@ def autoupdate_f():
                     elif ask in y_ans:
                         ahosts.append(item)
                         break
-            for item in ahosts:
-                nhost = c.host(item).get("hostname")
-                port = c.host(item).get("port")
-                user = c.host(item).get("user")
-                print(item, nhost, port, user)
-                cmd = f"""ssh {user}@{nhost} -p {port} -i ~/.ssh/server.key -t "sudo echo '{cur_user} ALL = (root) NOPASSWD: /usr/bin/apt-get' | sudo EDITOR='tee -a' visudo >> /dev/null" """
-                print(cmd)
-                print("enter user password:")
-                runcom(cmd, True)
+            #    DISABLED (why do i need add apt to run not from sudo?) -------------------------------------
+            # for item in ahosts:
+            #     nhost = c.host(item).get("hostname")
+            #     port = c.host(item).get("port")
+            #     user = c.host(item).get("user")
+            #     print(item, nhost, port, user)
+            #     cmd = f"""ssh {user}@{nhost} -p {port} -i ~/.ssh/server.key -t "sudo echo '{cur_user} ALL = (root) NOPASSWD: /usr/bin/apt-get' | sudo EDITOR='tee -a' visudo >> /dev/null" """
+            #     print(cmd)
+            #     print("enter user password:")
+            #     runcom(cmd, True)
         # dummy variables to shut up generator
         user = "{user}"
         nhost = "{nhost}"
-        port = "{port}"
-        upgrade_command = "{upgrade_command}"
-        code = f"""from __future__ import print_function
-    from sshconf import read_ssh_config
-    from os.path import expanduser
-    import os
-    # reading ssh config
-    c = read_ssh_config(expanduser("~/.ssh/config"))
-    hosts = c.hosts()
-    upgrade_command = {upgrade_command}
-    # function to execute command
-    def runcom(command):
-        exec = os.popen(command)
-        out=exec.read()
-        print(out)
-    # replaced by script
-    ahosts = {ahosts}
-    #update all servers specified in ahosts list
-    for item in ahosts:
-        nhost = c.host(item).get("hostname")
-        port = c.host(item).get("port")
-        user = c.host(item).get("user")
-        print(item, nhost, port, user)
-        cmd = f'ssh {user}@{nhost} -p {port} -i ~/.ssh/server.key "{upgrade_command}"'
-        runcom(cmd)
+        port = "{port}" 
+        #wasnt working if commented out
+        #upgrade_command = "{upgrade_command}" 
+        code = f"""
+from __future__ import print_function
+from sshconf import read_ssh_config
+from os.path import expanduser
+import os
+# reading ssh config
+c = read_ssh_config(expanduser("~/.ssh/config"))
+hosts = c.hosts()
+upgrade_command = {upgrade_command}
+# function to execute command
+def runcom(command):
+    exec = os.popen(command)
+    out=exec.read()
+    print(out)
+# replaced by script
+ahosts = {ahosts}
+#update all servers specified in ahosts list
+for item in ahosts:
+    nhost = c.host(item).get("hostname")
+    port = c.host(item).get("port")
+    user = c.host(item).get("user")
+    print(item, nhost, port, user)
+    cmd = f'ssh {user}@{nhost} -p {port} -i ~/.ssh/server.key "{upgrade_command}"'
+    runcom(cmd)
     # self update
     if {selfupdate}:
         runcom(upgrade_command)"""
@@ -116,7 +130,7 @@ def musicdownloader_f():
     if config['MUSIC_DOWNLOADER'].getboolean('yt_download') == True:
         create_dir()
         if os.path.isfile(expanduser('/usr/bin/youtube-dl')) == False:
-            runcom('sudo apt-get-get install youtube-dl -y', False)
+            runcom('sudo apt-get install youtube-dl -y', False)
         songs_folder = config['MUSIC_DOWNLOADER']['songs_folder']
         yt_playlist = config['MUSIC_DOWNLOADER']['yt_playlist']
         today = u'сьогодні'
@@ -142,9 +156,9 @@ def musicdownloader_f():
 def torrentmover_f():
     if config['TORRENT_MOVER'].getboolean('torrent_mover') == True:
         create_dir()
-        if os.path.isdir(config['TORRENT_MOVER']['local_torrent_folder']) == False: os.mkdir(config['TORRENT_MOVER']['local_torrent_folder'])
+        local_torrent_folder = dir + 'torrent/'
+        if os.path.isdir(local_torrent_folder) == False: os.mkdir(local_torrent_folder)
         if os.path.isdir(config['TORRENT_MOVER']['remote_torrent_folder']) == False: print('Folder to copy from not exist'); exit()
-        local_torrent_folder = config['TORRENT_MOVER']['local_torrent_folder']
         remote_torrent_folder = config['TORRENT_MOVER']['remote_torrent_folder']
         code = f"""#!/usr/bin/bash
     while true
@@ -176,13 +190,38 @@ def torrentmover_f():
         with open(service_file, 'w') as f:
             f.write(service_code)
         runcom(f'sudo chmod +x {service_file} && sudo cp {service_file} /etc/systemd/system/ && sudo systemctl start {service_file} && sudo systemctl enable {service_file} && rm -rf {service_file}', False)
-# remove changes made by script
+# remove folder made by script
 def remove_f():
     if os.path.isdir(dir) == True:
         import shutil
         shutil.rmtree(dir)
-        print('0')
-        
+        print('dir removed')
+# remove crontab entries
+def remove_cron():
+    import subprocess
+    # Define the lines to remove from the crontab file
+    music_file = dir + 'music.sh'
+    autoupdate_file = dir + 'autoupdate.py'
+    lines_to_remove = [f"00 03 * * * bash {music_file}", f"00 03 * * * python3 {autoupdate_file}"]
+    # Get the current crontab configuration
+    current_crontab = subprocess.check_output(["crontab", "-l"]).decode("utf-8")
+    # Split the crontab configuration into a list of lines
+    crontab_lines = current_crontab.split("\n")
+    # Remove all instances of the lines to delete from the list
+    i = 0
+    while i < len(crontab_lines):
+        if crontab_lines[i] in lines_to_remove:
+            crontab_lines.pop(i)
+        else:
+            i += 1
+    # Join the list back into a single string with each line separated by a newline character
+    updated_crontab = "\n".join(crontab_lines)
+    # Write the updated crontab configuration to a temporary file
+    with open('/tmp/crontab.tmp', 'w') as f:
+        f.write(updated_crontab)
+    # Update the crontab configuration with the contents of the temporary file
+    subprocess.run(["crontab", "/tmp/crontab.tmp"])
+    print('cron job removed')
 # argument processing
 if len(sys.argv) == 2:
     option = str(sys.argv[1])
@@ -193,12 +232,13 @@ if len(sys.argv) == 2:
             autoupdate_f()
             musicdownloader_f()
             torrentmover_f()
-        elif option == 'verify':
-            print('verifying...')
         elif option == 'debug':
             print('debugging...')
         elif option == 'remove':
             print('removing...')
             remove_f()
+            remove_cron()
     else:
         print('Command not found')
+else:
+    print('Argument expected')
